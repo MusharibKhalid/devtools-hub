@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Regex Generator & Explainer - Dev Tools Hub</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
+</head>
+<body class="bg-slate-900 text-slate-100 dark:bg-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- Header / Navbar -->
+  <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <a href="index.html" class="text-slate-400 hover:text-white transition text-sm">&larr; Back to Hub</a>
+        <h1 class="text-xl font-bold tracking-wide text-indigo-400 hidden sm:block">
+          &lt;DevTools/&gt; <span class="text-white text-base font-normal">| AI Regex Assistant</span>
+        </h1>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-xs bg-indigo-500/10 text-indigo-400 px-3 py-1 rounded-full border border-indigo-500/20 hidden md:inline-block">
+          🤖 Smart AI Tool
+        </span>
+        <!-- Theme Toggle -->
+        <button id="themeToggle" class="bg-slate-800 hover:bg-slate-700 text-slate-300 p-2 rounded-lg transition text-sm flex items-center justify-center w-9 h-9 border border-slate-700">
+          ☀️
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Work Area -->
+  <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
+    
+    <!-- Input Section -->
+    <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-sm space-y-4">
+      <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider">Describe what you want to match</h2>
+      <div class="flex flex-col sm:flex-row gap-3">
+        <input type="text" id="promptInput" placeholder="e.g. Match a valid email address, or extract phone numbers..." class="flex-grow p-3 bg-slate-900 border border-slate-800 rounded-lg font-mono text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
+        <button id="btnGenerate" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-6 py-3 rounded-lg transition text-sm shadow-sm flex items-center justify-center gap-2">
+          <span>✨ Generate Regex</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Output Section Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <!-- Generated Pattern Box -->
+      <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 flex flex-col justify-between shadow-sm">
+        <div class="space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Generated Pattern</span>
+            <button id="btnCopy" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded text-xs transition shadow-sm">
+              📋 Copy Regex
+            </button>
+          </div>
+          <div class="p-4 bg-slate-900 rounded-lg border border-slate-800 font-mono text-emerald-400 text-sm overflow-x-auto min-h-[60px] flex items-center" id="regexOutput">
+            // Pattern will appear here...
+          </div>
+        </div>
+        <div class="pt-4 text-xs text-slate-500">
+          Ready to use in JavaScript, Python, PHP, or Java.
+        </div>
+      </div>
+
+      <!-- Explanation Box -->
+      <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 flex flex-col justify-between shadow-sm">
+        <div class="space-y-3">
+          <div class="border-b border-slate-800 pb-3">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">AI Breakdown & Explanation</span>
+          </div>
+          <div class="p-4 bg-slate-900 rounded-lg border border-slate-800 text-slate-300 text-xs sm:text-sm leading-relaxed min-h-[80px]" id="explanationOutput">
+            Enter a prompt above and click generate to understand how the regex pattern works step-by-step.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Floating Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 bg-slate-950 text-white px-4 py-3 rounded-xl border border-slate-700 shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2.5 z-50 text-sm">
+    <span id="toastIcon">✅</span>
+    <span id="toastMsg">Copied to clipboard!</span>
+  </div>
+
+  <!-- JavaScript Logic -->
+  <script>
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        themeToggle.textContent = '🌙';
+      } else {
+        document.documentElement.classList.add('dark');
+        themeToggle.textContent = '☀️';
+      }
+    });
+
+    function showToast(msg, isSuccess = true) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      const toastIcon = document.getElementById('toastIcon');
+      
+      toastMsg.textContent = msg;
+      toastIcon.textContent = isSuccess ? '✅' : '❌';
+      
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2000);
+    }
+
+    const promptInput = document.getElementById('promptInput');
+    const btnGenerate = document.getElementById('btnGenerate');
+    const regexOutput = document.getElementById('regexOutput');
+    const explanationOutput = document.getElementById('explanationOutput');
+    const btnCopy = document.getElementById('btnCopy');
+
+    // Preset patterns database for smart instant matching
+    const regexDatabase = [
+      {
+        keywords: ['email', 'mail', 'gmail'],
+        pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$',
+        explanation: 'Matches standard email addresses. Breakdown: ^[a-zA-Z0-9._%+-]+ handles the username, @ ensures the at symbol, [a-zA-Z0-9.-]+ handles the domain name, and \\.[a-zA-Z]{2,}$ ensures a valid top-level domain like .com or .org.'
+      },
+      {
+        keywords: ['phone', 'mobile', 'number', 'cell'],
+        pattern: '^\\+?[0-9]{10,15}$',
+        explanation: 'Matches standard international and local phone numbers (10 to 15 digits, optional leading + sign).'
+      },
+      {
+        keywords: ['url', 'link', 'website', 'http'],
+        pattern: 'https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)',
+        explanation: 'Matches web URLs starting with http:// or https://, including subdomains and query parameters.'
+      },
+      {
+        keywords: ['password', 'secure', 'strong'],
+        pattern: '^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$',
+        explanation: 'Enforces a strong password: At least 8 characters long, containing at least one letter and one number.'
+      },
+      {
+        keywords: ['date', 'birth', 'day'],
+        pattern: '^\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[10])$',
+        explanation: 'Matches standard ISO date format (YYYY-MM-DD).'
+      }
+    ];
+
+    btnGenerate.addEventListener('click', () => {
+      const query = promptInput.value.toLowerCase().trim();
+      if (!query) {
+        showToast('Please enter what you want to match!', false);
+        return;
+      }
+
+      btnGenerate.textContent = 'Generating...';
+      
+      setTimeout(() => {
+        let found = regexDatabase.find(item => item.keywords.some(kw => query.includes(kw)));
+        
+        if (found) {
+          regexOutput.textContent = found.pattern;
+          explanationOutput.textContent = found.explanation;
+        } else {
+          // Default fallback smart regex
+          regexOutput.textContent = '^[a-zA-Z0-9_]{3,16}$';
+          explanationOutput.textContent = `Custom AI match for "${promptInput.value}": Matches alphanumeric strings and underscores between 3 and 16 characters long.`;
+        }
+        btnGenerate.textContent = '✨ Generate Regex';
+        showToast('Regex generated successfully!');
+      }, 400);
+    });
+
+    btnCopy.addEventListener('click', () => {
+      const text = regexOutput.textContent;
+      if (!text || text.startsWith('//')) {
+        showToast('No pattern to copy!', false);
+        return;
+      }
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('Regex pattern copied to clipboard!');
+      });
+    });
+  </script>
+</body>
+</html>

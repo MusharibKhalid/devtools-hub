@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UUID v4 & Password Generator - Dev Tools Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- Header -->
+  <header class="border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <a href="index.html" class="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition text-sm">&larr; Back to Hub</a>
+        <h1 class="text-xl font-bold tracking-wide text-indigo-600 dark:text-indigo-400 hidden sm:block">
+          &lt;DevTools/&gt; <span class="text-slate-800 dark:text-white text-base font-normal">| UUID & Password Generator</span>
+        </h1>
+      </div>
+      <div class="flex items-center gap-3">
+        <button id="themeToggle" class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 p-2 rounded-lg transition text-sm flex items-center justify-center w-9 h-9 border border-slate-300 dark:border-slate-700">☀️</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full space-y-8">
+    
+    <!-- Section 1: UUID v4 Generator -->
+    <div class="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-4">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white">UUID v4 Generator</h2>
+          <p class="text-slate-500 dark:text-slate-400 text-xs">Generate cryptographically secure Unique Universal Identifiers.</p>
+        </div>
+        <button id="btnGenUuid" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-4 py-2 rounded-lg transition text-sm shadow-sm">
+          ⚡ Generate New UUID
+        </button>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <input type="text" id="uuidOutput" readonly class="w-full p-3 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-lg font-mono text-sm text-indigo-600 dark:text-indigo-400 focus:outline-none cursor-text">
+        <button id="btnCopyUuid" class="bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-4 py-3 rounded-lg transition text-sm shadow-sm flex-shrink-0">
+          📋 Copy
+        </button>
+      </div>
+    </div>
+
+    <!-- Section 2: Secure Password Generator -->
+    <div class="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm space-y-6">
+      <div class="border-b border-slate-200 dark:border-slate-800 pb-4">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white">Random Password Generator</h2>
+        <p class="text-slate-500 dark:text-slate-400 text-xs">Create strong, customized passwords for APIs, users, or system credentials.</p>
+      </div>
+
+      <!-- Controls -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-4">
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <span class="text-slate-600 dark:text-slate-400">Password Length</span>
+              <span id="lenVal" class="font-mono text-indigo-600 dark:text-indigo-400 font-bold">16</span>
+            </div>
+            <input type="range" id="passLen" min="8" max="64" value="16" class="w-full accent-indigo-600 cursor-pointer">
+          </div>
+
+          <div class="space-y-2 text-sm">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="chkUpper" checked class="accent-indigo-600 w-4 h-4 rounded">
+              <span>Include Uppercase (A-Z)</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="chkNumbers" checked class="accent-indigo-600 w-4 h-4 rounded">
+              <span>Include Numbers (0-9)</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="chkSymbols" checked class="accent-indigo-600 w-4 h-4 rounded">
+              <span>Include Special Symbols (!@#$%^&*)</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="flex flex-col justify-between space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Generated Password</label>
+            <div class="flex items-center gap-2">
+              <input type="text" id="passOutput" readonly class="w-full p-3 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-lg font-mono text-sm text-emerald-600 dark:text-emerald-400 focus:outline-none">
+              <button id="btnCopyPass" class="bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-4 py-3 rounded-lg transition text-sm shadow-sm flex-shrink-0">
+                📋 Copy
+              </button>
+            </div>
+          </div>
+
+          <button id="btnGenPass" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 rounded-lg transition text-sm shadow-sm">
+            🎲 Generate New Password
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-6 right-6 bg-slate-950 text-white px-4 py-3 rounded-xl border border-slate-700 shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2.5 z-50 text-sm">
+    <span id="toastIcon">✅</span>
+    <span id="toastMsg">Copied to clipboard!</span>
+  </div>
+
+  <script>
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        themeToggle.textContent = '🌙';
+      } else {
+        document.documentElement.classList.add('dark');
+        themeToggle.textContent = '☀️';
+      }
+    });
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 2000);
+    }
+
+    // UUID Generator Logic
+    function generateUUID() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+
+    const uuidOutput = document.getElementById('uuidOutput');
+    document.getElementById('btnGenUuid').addEventListener('click', () => uuidOutput.value = generateUUID());
+    document.getElementById('btnCopyUuid').addEventListener('click', () => {
+      if (!uuidOutput.value) return;
+      navigator.clipboard.writeText(uuidOutput.value);
+      showToast('UUID copied to clipboard!');
+    });
+
+    // Password Generator Logic
+    const passLen = document.getElementById('passLen');
+    const lenVal = document.getElementById('lenVal');
+    const passOutput = document.getElementById('passOutput');
+
+    passLen.addEventListener('input', () => lenVal.textContent = passLen.value);
+
+    function generatePassword() {
+      const charsLower = 'abcdefghijklmnopqrstuvwxyz';
+      const charsUpper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      const numbers = '0123456789';
+      const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+
+      let pool = charsLower;
+      if (document.getElementById('chkUpper').checked) pool += charsUpper;
+      if (document.getElementById('chkNumbers').checked) pool += numbers;
+      if (document.getElementById('chkSymbols').checked) pool += symbols;
+
+      let password = '';
+      for (let i = 0; i < passLen.value; i++) {
+        password += pool.charAt(Math.floor(Math.random() * pool.length));
+      }
+      passOutput.value = password;
+    }
+
+    document.getElementById('btnGenPass').addEventListener('click', generatePassword);
+    document.getElementById('btnCopyPass').addEventListener('click', () => {
+      if (!passOutput.value) return;
+      navigator.clipboard.writeText(passOutput.value);
+      showToast('Password copied to clipboard!');
+    });
+
+    // Auto generate initial values
+    uuidOutput.value = generateUUID();
+    generatePassword();
+  </script>
+</body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Base64 Encoder & Decoder - Dev Tools Hub</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
+</head>
+<body class="bg-slate-900 text-slate-100 dark:bg-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- Header / Navbar -->
+  <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <a href="index.html" class="text-slate-400 hover:text-white transition text-sm">&larr; Back to Hub</a>
+        <h1 class="text-xl font-bold tracking-wide text-indigo-400 hidden sm:block">
+          &lt;DevTools/&gt; <span class="text-white text-base font-normal">| Base64 Encoder / Decoder</span>
+        </h1>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-xs bg-indigo-500/10 text-indigo-400 px-3 py-1 rounded-full border border-indigo-500/20 hidden md:inline-block">
+          100% Client-Side
+        </span>
+        <!-- Theme Toggle -->
+        <button id="themeToggle" class="bg-slate-800 hover:bg-slate-700 text-slate-300 p-2 rounded-lg transition text-sm flex items-center justify-center w-9 h-9 border border-slate-700">
+          ☀️
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Work Area -->
+  <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
+    
+    <!-- Action Mode Toolbar -->
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-4 bg-slate-950 p-3 rounded-xl border border-slate-800 shadow-sm">
+      <div class="flex items-center gap-2">
+        <button id="tabEncode" class="bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg transition text-sm shadow-sm">
+          🔒 Encode to Base64
+        </button>
+        <button id="tabDecode" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium px-4 py-2 rounded-lg transition text-sm border border-slate-700">
+          🔓 Decode from Base64
+        </button>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button id="btnClear" class="bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 px-3 py-2 rounded-lg transition text-sm">
+          Clear All
+        </button>
+        <button id="btnCopy" class="bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-4 py-2 rounded-lg transition text-sm shadow-sm">
+          📋 Copy Output
+        </button>
+      </div>
+    </div>
+
+    <!-- Status Alert Bar -->
+    <div id="statusBox" class="hidden mb-4 p-3 rounded-lg text-sm font-mono border"></div>
+
+    <!-- Dual Editor Columns -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-[550px]">
+      
+      <!-- Input Column -->
+      <div class="flex flex-col h-full bg-slate-950 rounded-xl border border-slate-800 shadow-sm overflow-hidden">
+        <div id="inputLabelHeader" class="bg-slate-900/60 px-4 py-2.5 text-xs font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-800 flex justify-between">
+          <span>Input Plain Text</span>
+          <span id="inputCharCount" class="text-slate-500 font-mono">0 chars</span>
+        </div>
+        <textarea id="base64Input" placeholder="Enter text to encode..." class="w-full flex-grow p-4 bg-transparent font-mono text-sm text-slate-200 resize-none focus:outline-none"></textarea>
+      </div>
+
+      <!-- Output Column -->
+      <div class="flex flex-col h-full bg-slate-950 rounded-xl border border-slate-800 shadow-sm overflow-hidden">
+        <div id="outputLabelHeader" class="bg-slate-900/60 px-4 py-2.5 text-xs font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-800 flex justify-between">
+          <span>Base64 Encoded Result</span>
+          <span id="outputCharCount" class="text-slate-500 font-mono">0 chars</span>
+        </div>
+        <textarea id="base64Output" readonly placeholder="Result will appear here..." class="w-full flex-grow p-4 bg-transparent font-mono text-sm text-emerald-400 resize-none focus:outline-none cursor-text"></textarea>
+      </div>
+
+    </div>
+
+    <!-- SEO Content Section -->
+    <section class="mt-12 border-t border-slate-800 pt-8 text-slate-400 space-y-4">
+      <h2 class="text-lg font-semibold text-white">Free Online Base64 Encoder and Decoder</h2>
+      <p class="text-sm leading-relaxed">
+        Quickly convert text strings to Base64 format or decode encrypted Base64 strings back to readable text format. Built completely with client-side JavaScript for maximum speed and data privacy.
+      </p>
+    </section>
+
+  </main>
+
+  <!-- Floating Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 bg-slate-950 text-white px-4 py-3 rounded-xl border border-slate-700 shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2.5 z-50 text-sm">
+    <span id="toastIcon">✅</span>
+    <span id="toastMsg">Copied to clipboard!</span>
+  </div>
+
+  <!-- JavaScript Logic -->
+  <script>
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        themeToggle.textContent = '🌙';
+      } else {
+        document.documentElement.classList.add('dark');
+        themeToggle.textContent = '☀️';
+      }
+    });
+
+    // Toast Notification Helper
+    function showToast(msg, isSuccess = true) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      const toastIcon = document.getElementById('toastIcon');
+      
+      toastMsg.textContent = msg;
+      toastIcon.textContent = isSuccess ? '✅' : '❌';
+      
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2000);
+    }
+
+    const base64Input = document.getElementById('base64Input');
+    const base64Output = document.getElementById('base64Output');
+    const tabEncode = document.getElementById('tabEncode');
+    const tabDecode = document.getElementById('tabDecode');
+    const btnClear = document.getElementById('btnClear');
+    const btnCopy = document.getElementById('btnCopy');
+    const statusBox = document.getElementById('statusBox');
+    const inputCharCount = document.getElementById('inputCharCount');
+    const outputCharCount = document.getElementById('outputCharCount');
+    const inputLabelHeader = document.getElementById('inputLabelHeader').querySelector('span');
+    const outputLabelHeader = document.getElementById('outputLabelHeader').querySelector('span');
+
+    let currentMode = 'encode';
+
+    tabEncode.addEventListener('click', () => {
+      currentMode = 'encode';
+      tabEncode.className = 'bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg transition text-sm shadow-sm';
+      tabDecode.className = 'bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium px-4 py-2 rounded-lg transition text-sm border border-slate-700';
+      inputLabelHeader.textContent = 'Input Plain Text';
+      outputLabelHeader.textContent = 'Base64 Encoded Result';
+      base64Input.placeholder = 'Enter text to encode...';
+      processConversion();
+    });
+
+    tabDecode.addEventListener('click', () => {
+      currentMode = 'decode';
+      tabDecode.className = 'bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg transition text-sm shadow-sm';
+      tabEncode.className = 'bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium px-4 py-2 rounded-lg transition text-sm border border-slate-700';
+      inputLabelHeader.textContent = 'Input Base64 String';
+      outputLabelHeader.textContent = 'Decoded Plain Text';
+      base64Input.placeholder = 'Enter Base64 string to decode...';
+      processConversion();
+    });
+
+    function processConversion() {
+      const val = base64Input.value;
+      inputCharCount.textContent = `${val.length} chars`;
+      
+      if (!val) {
+        base64Output.value = '';
+        outputCharCount.textContent = '0 chars';
+        statusBox.classList.add('hidden');
+        return;
+      }
+
+      try {
+        if (currentMode === 'encode') {
+          const encoded = btoa(unescape(encodeURIComponent(val)));
+          base64Output.value = encoded;
+          outputCharCount.textContent = `${encoded.length} chars`;
+          showStatus('✅ Successfully encoded to Base64!', true);
+        } else {
+          const decoded = decodeURIComponent(escape(atob(val)));
+          base64Output.value = decoded;
+          outputCharCount.textContent = `${decoded.length} chars`;
+          showStatus('✅ Successfully decoded from Base64!', true);
+        }
+      } catch (err) {
+        base64Output.value = '';
+        outputCharCount.textContent = '0 chars';
+        showStatus(`❌ Error: Invalid input format for ${currentMode}ing.`, false);
+      }
+    }
+
+    base64Input.addEventListener('input', processConversion);
+
+    function showStatus(msg, isSuccess) {
+      statusBox.classList.remove('hidden', 'bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-400', 'bg-red-500/10', 'border-red-500/30', 'text-red-400');
+      if (isSuccess) {
+        statusBox.classList.add('bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-400');
+      } else {
+        statusBox.classList.add('bg-red-500/10', 'border-red-500/30', 'text-red-400');
+      }
+      statusBox.textContent = msg;
+    }
+
+    btnClear.addEventListener('click', () => {
+      base64Input.value = '';
+      base64Output.value = '';
+      inputCharCount.textContent = '0 chars';
+      outputCharCount.textContent = '0 chars';
+      statusBox.classList.add('hidden');
+    });
+
+    btnCopy.addEventListener('click', () => {
+      if (!base64Output.value) {
+        showToast('Nothing to copy!', false);
+        return;
+      }
+      navigator.clipboard.writeText(base64Output.value).then(() => {
+        showToast('Base64 result copied to clipboard!');
+      });
+    });
+  </script>
+</body>
+</html>

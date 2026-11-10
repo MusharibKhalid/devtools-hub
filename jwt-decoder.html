@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JWT Token Decoder - DevTools Hub PRO</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class' }</script>
+</head>
+<body class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col font-sans">
+
+  <header class="border-b border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3.5 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <a href="index.html" class="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white text-sm transition">&larr; Back to Hub</a>
+        <h1 class="text-lg font-bold text-indigo-600 dark:text-indigo-400 hidden sm:block">JWT Token Decoder</h1>
+      </div>
+      <button id="themeToggle" class="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 p-2 rounded-xl text-sm border border-slate-300 dark:border-slate-700">☀️</button>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full space-y-6">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-md space-y-3">
+      <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Encoded Bearer / JWT Token</span>
+      <textarea id="jwtInput" rows="4" placeholder="Paste eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." class="w-full p-4 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl font-mono text-xs sm:text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-indigo-500"></textarea>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-md space-y-3">
+        <span class="text-xs font-semibold uppercase tracking-wider text-indigo-500">Header</span>
+        <pre id="headerOutput" class="p-4 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl font-mono text-xs text-indigo-600 dark:text-indigo-400 overflow-x-auto min-h-[160px]">{}</pre>
+      </div>
+
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-md space-y-3">
+        <span class="text-xs font-semibold uppercase tracking-wider text-emerald-500">Payload Claims</span>
+        <pre id="payloadOutput" class="p-4 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl font-mono text-xs text-emerald-600 dark:text-emerald-400 overflow-x-auto min-h-[160px]">{}</pre>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+      themeToggle.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+    });
+
+    const jwtInput = document.getElementById('jwtInput');
+    const headerOutput = document.getElementById('headerOutput');
+    const payloadOutput = document.getElementById('payloadOutput');
+
+    function parseJwt(token) {
+      try {
+        const parts = token.split('.');
+        if (parts.length !== 3) return null;
+        const header = JSON.parse(atob(parts[0]));
+        const payload = JSON.parse(atob(parts[1]));
+        return { header, payload };
+      } catch (e) {
+        return null;
+      }
+    }
+
+    jwtInput.addEventListener('input', () => {
+      const token = jwtInput.value.trim();
+      const decoded = parseJwt(token);
+      if (decoded) {
+        headerOutput.textContent = JSON.stringify(decoded.header, null, 2);
+        payloadOutput.textContent = JSON.stringify(decoded.payload, null, 2);
+      } else {
+        headerOutput.textContent = '{ "error": "Invalid JWT Format" }';
+        payloadOutput.textContent = '{ "error": "Invalid JWT Format" }';
+      }
+    });
+  </script>
+</body>
+</html>

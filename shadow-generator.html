@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSS Box-Shadow Generator - Dev Tools Hub</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
+</head>
+<body class="bg-slate-900 text-slate-100 dark:bg-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- Header / Navbar -->
+  <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <a href="index.html" class="text-slate-400 hover:text-white transition text-sm">&larr; Back to Hub</a>
+        <h1 class="text-xl font-bold tracking-wide text-indigo-400 hidden sm:block">
+          &lt;DevTools/&gt; <span class="text-white text-base font-normal">| CSS Box-Shadow Generator</span>
+        </h1>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-xs bg-indigo-500/10 text-indigo-400 px-3 py-1 rounded-full border border-indigo-500/20 hidden md:inline-block">
+          100% Client-Side
+        </span>
+        <!-- Theme Toggle -->
+        <button id="themeToggle" class="bg-slate-800 hover:bg-slate-700 text-slate-300 p-2 rounded-lg transition text-sm flex items-center justify-center w-9 h-9 border border-slate-700">
+          ☀️
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Work Area -->
+  <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
+    
+    <!-- Workspace Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      
+      <!-- Controls Panel (Left 7 Cols) -->
+      <div class="lg:col-span-7 bg-slate-950 border border-slate-800 rounded-xl p-5 space-y-5 shadow-sm">
+        <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider border-b border-slate-800 pb-3 flex items-center justify-between">
+          <span>⚙️ Adjust Shadow Parameters</span>
+          <button id="btnReset" class="text-xs text-indigo-400 hover:text-indigo-300 transition">Reset Defaults</button>
+        </h2>
+
+        <!-- Sliders Group -->
+        <div class="space-y-4 text-sm">
+          
+          <!-- Horizontal Offset -->
+          <div>
+            <div class="flex justify-between mb-1 text-slate-400">
+              <span>Horizontal Offset (X)</span>
+              <span id="valX" class="font-mono text-indigo-400 font-semibold">10px</span>
+            </div>
+            <input type="range" id="rangeX" min="-50" max="50" value="10" class="w-full accent-indigo-500 cursor-pointer">
+          </div>
+
+          <!-- Vertical Offset -->
+          <div>
+            <div class="flex justify-between mb-1 text-slate-400">
+              <span>Vertical Offset (Y)</span>
+              <span id="valY" class="font-mono text-indigo-400 font-semibold">15px</span>
+            </div>
+            <input type="range" id="rangeY" min="-50" max="50" value="15" class="w-full accent-indigo-500 cursor-pointer">
+          </div>
+
+          <!-- Blur Radius -->
+          <div>
+            <div class="flex justify-between mb-1 text-slate-400">
+              <span>Blur Radius</span>
+              <span id="valBlur" class="font-mono text-indigo-400 font-semibold">25px</span>
+            </div>
+            <input type="range" id="rangeBlur" min="0" max="100" value="25" class="w-full accent-indigo-500 cursor-pointer">
+          </div>
+
+          <!-- Spread Radius -->
+          <div>
+            <div class="flex justify-between mb-1 text-slate-400">
+              <span>Spread Radius</span>
+              <span id="valSpread" class="font-mono text-indigo-400 font-semibold">-3px</span>
+            </div>
+            <input type="range" id="rangeSpread" min="-50" max="50" value="-3" class="w-full accent-indigo-500 cursor-pointer">
+          </div>
+
+          <!-- Shadow Opacity -->
+          <div>
+            <div class="flex justify-between mb-1 text-slate-400">
+              <span>Shadow Opacity</span>
+              <span id="valOpacity" class="font-mono text-indigo-400 font-semibold">0.25</span>
+            </div>
+            <input type="range" id="rangeOpacity" min="0" max="1" step="0.01" value="0.25" class="w-full accent-indigo-500 cursor-pointer">
+          </div>
+
+          <!-- Color & Options -->
+          <div class="grid grid-cols-2 gap-4 pt-2">
+            <div>
+              <label class="block mb-1 text-slate-400 text-xs">Shadow Color</label>
+              <input type="color" id="shadowColor" value="#4f46e5" class="w-full h-10 bg-slate-900 border border-slate-800 rounded cursor-pointer p-1">
+            </div>
+            <div class="flex items-center pt-5">
+              <label class="flex items-center gap-2 cursor-pointer select-none">
+                <input type="checkbox" id="checkInset" class="w-4 h-4 accent-indigo-500 rounded">
+                <span class="text-slate-300 text-sm">Inset Shadow</span>
+              </label>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Live Preview & Code Panel (Right 5 Cols) -->
+      <div class="lg:col-span-5 flex flex-col gap-6">
+        
+        <!-- Preview Box Area -->
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 flex flex-col items-center justify-center h-[260px] relative overflow-hidden shadow-sm">
+          <span class="absolute top-3 left-4 text-xs font-semibold text-slate-500 uppercase">Live Element Preview</span>
+          <div id="previewBox" class="w-32 h-32 bg-indigo-600 rounded-2xl flex items-center justify-center font-bold text-white transition-all duration-150 shadow-lg">
+            Box
+          </div>
+        </div>
+
+        <!-- CSS Code Output Area -->
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-col flex-grow shadow-sm">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Generated CSS Code</span>
+            <button id="btnCopy" class="bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-3 py-1.5 rounded transition text-xs shadow-sm">
+              📋 Copy CSS
+            </button>
+          </div>
+          <textarea id="cssOutput" readonly class="w-full h-24 p-3 bg-slate-900 rounded font-mono text-xs text-emerald-400 resize-none focus:outline-none border border-slate-800"></textarea>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- SEO Content Section -->
+    <section class="mt-12 border-t border-slate-800 pt-8 text-slate-400 space-y-4">
+      <h2 class="text-lg font-semibold text-white">Free Online CSS Box-Shadow Generator</h2>
+      <p class="text-sm leading-relaxed">
+        Design gorgeous elevation effects and depth shadows for your website cards, buttons, and layouts using interactive visual sliders. Instantly copy clean, production-ready CSS code.
+      </p>
+    </section>
+
+  </main>
+
+  <!-- Floating Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 bg-slate-950 text-white px-4 py-3 rounded-xl border border-slate-700 shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2.5 z-50 text-sm">
+    <span id="toastIcon">✅</span>
+    <span id="toastMsg">Copied to clipboard!</span>
+  </div>
+
+  <!-- JavaScript Logic -->
+  <script>
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        themeToggle.textContent = '🌙';
+      } else {
+        document.documentElement.classList.add('dark');
+        themeToggle.textContent = '☀️';
+      }
+    });
+
+    // Toast Notification Helper
+    function showToast(msg, isSuccess = true) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      const toastIcon = document.getElementById('toastIcon');
+      
+      toastMsg.textContent = msg;
+      toastIcon.textContent = isSuccess ? '✅' : '❌';
+      
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2000);
+    }
+
+    const rangeX = document.getElementById('rangeX');
+    const rangeY = document.getElementById('rangeY');
+    const rangeBlur = document.getElementById('rangeBlur');
+    const rangeSpread = document.getElementById('rangeSpread');
+    const rangeOpacity = document.getElementById('rangeOpacity');
+    const shadowColor = document.getElementById('shadowColor');
+    const checkInset = document.getElementById('checkInset');
+    
+    const valX = document.getElementById('valX');
+    const valY = document.getElementById('valY');
+    const valBlur = document.getElementById('valBlur');
+    const valSpread = document.getElementById('valSpread');
+    const valOpacity = document.getElementById('valOpacity');
+    
+    const previewBox = document.getElementById('previewBox');
+    const cssOutput = document.getElementById('cssOutput');
+    const btnCopy = document.getElementById('btnCopy');
+    const btnReset = document.getElementById('btnReset');
+
+    function hexToRgba(hex, opacity) {
+      let c = hex.replace('#', '');
+      if (c.length === 3) {
+        c = c.split('').map(x => x + x).join('');
+      }
+      const num = parseInt(c, 16);
+      const r = (num >> 16) & 255;
+      const g = (num >> 8) & 255;
+      const b = num & 255;
+      return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    }
+
+    function updateShadow() {
+      const x = rangeX.value + 'px';
+      const y = rangeY.value + 'px';
+      const blur = rangeBlur.value + 'px';
+      const spread = rangeSpread.value + 'px';
+      const opacity = rangeOpacity.value;
+      const colorHex = shadowColor.value;
+      const isInset = checkInset.checked;
+
+      valX.textContent = x;
+      valY.textContent = y;
+      valBlur.textContent = blur;
+      valSpread.textContent = spread;
+      valOpacity.textContent = opacity;
+
+      const rgbaColor = hexToRgba(colorHex, opacity);
+      const shadowValue = `${isInset ? 'inset ' : ''}${x} ${y} ${blur} ${spread} ${rgbaColor}`;
+
+      previewBox.style.boxShadow = shadowValue;
+      cssOutput.value = `box-shadow: ${shadowValue};`;
+    }
+
+    [rangeX, rangeY, rangeBlur, rangeSpread, rangeOpacity, shadowColor, checkInset].forEach(el => {
+      el.addEventListener('input', updateShadow);
+    });
+
+    btnReset.addEventListener('click', () => {
+      rangeX.value = 10;
+      rangeY.value = 15;
+      rangeBlur.value = 25;
+      rangeSpread.value = -3;
+      rangeOpacity.value = 0.25;
+      shadowColor.value = '#4f46e5';
+      checkInset.checked = false;
+      updateShadow();
+      showToast('Settings reset to defaults');
+    });
+
+    btnCopy.addEventListener('click', () => {
+      if (!cssOutput.value) {
+        showToast('Nothing to copy!', false);
+        return;
+      }
+      navigator.clipboard.writeText(cssOutput.value).then(() => {
+        showToast('CSS code copied to clipboard!');
+      });
+    });
+
+    updateShadow();
+  </script>
+</body>
+</html>
